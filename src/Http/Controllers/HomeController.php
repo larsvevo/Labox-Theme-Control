@@ -47,7 +47,7 @@ class HomeController extends Controller
             ->value('achievement_score');
         
             $lastOnlineTimestamp = DB::table('users')
-            ->where('user_id', $user->id)
+            ->where('id', $user->id)
             ->value('last_online');
 
 
