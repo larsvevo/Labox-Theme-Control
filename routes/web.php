@@ -35,9 +35,6 @@ Route::middleware('web')->group(function () {
         ->middleware('guest')
         ->name('index');
 
-    Route::get('profiles/{user:username}', ProfileController::class)
-        ->middleware(Authenticate::using('sanctum'), 'voting.check')
-        ->name('profiles');
 
     Route::get('leaderboards', LeaderboardController::class)
         ->middleware(Authenticate::using('sanctum'), 'voting.check')
@@ -46,32 +43,6 @@ Route::middleware('web')->group(function () {
     Route::get('rare-values', RareValueController::class)
         ->middleware(Authenticate::using('sanctum'), 'voting.check')
         ->name('rare-values');
-
-    Route::name('shop.')->group(function () {
-        Route::get('shop', ShopController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->name('index');
-
-        Route::post('shop/{article}/purchase', PurchaseController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->name('purchase');
-
-        Route::post('shop/voucher/redeem', RedeemVoucherController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->name('voucher.redeem');
-
-        Route::post('shop/top-up', TopUpController::class)
-            ->middleware(Authenticate::using('sanctum'))
-            ->name('top-up');
-
-        Route::get('successful-transaction', [PayPalController::class, 'success'])
-            ->middleware(Authenticate::using('sanctum'))
-            ->name('successful-transaction');
-
-        Route::get('cancelled-transaction', [PayPalController::class, 'cancelled'])
-            ->middleware(Authenticate::using('sanctum'))
-            ->name('cancelled-transaction');
-    });
 
     Route::name('game.')->prefix('game')->group(function () {
         Route::get('nitro', ClientController::class)
@@ -103,28 +74,8 @@ Route::middleware('web')->group(function () {
         });
     });
 
-    Route::name('help-center.')->prefix('help-center')->group(function () {
-        Route::get('/', HelpCentreController::class)
-            ->middleware('voting.check')
-            ->name('index');
-
-        Route::get('rules', RuleController::class)
-            ->middleware('voting.check')
-            ->name('rules');
-
-        Route::resource('tickets', TicketController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->only(['create', 'store', 'show', 'destroy']);
-
-        Route::post('tickets/{ticket}/replies', TicketReplyController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->name('tickets.replies.store');
-    });
 
     Route::name('community.')->prefix('community')->group(function () {
-        Route::get('teams', TeamController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->name('teams');
 
         Route::get('staff', StaffController::class)
             ->middleware(Authenticate::using('sanctum'), 'voting.check')
@@ -138,12 +89,5 @@ Route::middleware('web')->group(function () {
             ->middleware(Authenticate::using('sanctum'), 'voting.check')
             ->name('articles.comments.store');
 
-        Route::resource('staff-applications', StaffApplicationController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->only(['index', 'show', 'store']);
-
-        Route::resource('photos', PhotoController::class)
-            ->middleware(Authenticate::using('sanctum'), 'voting.check')
-            ->only('index', 'update');
     });
 });
