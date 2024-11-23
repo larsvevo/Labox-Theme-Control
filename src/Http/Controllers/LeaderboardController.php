@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Atom\Theme\Http\Controllers;
 
 use Atom\Core\Models\User;
@@ -8,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Atom\Core\Models\CameraWeb;
 use Atom\Core\Models\WebsiteArticle;
+use Atom\Core\Models\Room;
 
 class LeaderboardController extends Controller
 {
@@ -16,6 +18,12 @@ class LeaderboardController extends Controller
      */
     public function __invoke(): View
     {
+
+        $topRooms = Room::orderByDesc('users')
+            ->select('name', 'users', 'users_max', 'owner_name')
+            ->limit(4)
+            ->get();
+
         $settings = WebsiteSetting::whereIn('key', ['min_staff_rank'])
             ->pluck('value', 'key');
 
@@ -68,7 +76,6 @@ class LeaderboardController extends Controller
             ->limit(10)
             ->get();
 
-
         $articles = WebsiteArticle::with('user')
             ->where('is_published', true)
             ->latest('id')
@@ -76,9 +83,10 @@ class LeaderboardController extends Controller
             ->get(); 
 
         $photos = CameraWeb::latest('id')
-                ->take(2)
-                ->with('user:id,username,look')
-                ->get();
-        return view('leaderboards', compact('credits', 'duckets', 'diamonds', 'onlineTimes', 'respects', 'achievements', 'articles', 'photos'));
+            ->take(2)
+            ->with('user:id,username,look')
+            ->get();
+
+        return view('leaderboards', compact('topRooms', 'credits', 'duckets', 'diamonds', 'onlineTimes', 'respects', 'achievements', 'articles', 'photos'));
     }
 }
