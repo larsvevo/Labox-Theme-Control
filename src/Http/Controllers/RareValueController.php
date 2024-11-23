@@ -2,6 +2,7 @@
 
 namespace Atom\Theme\Http\Controllers;
 
+use Atom\Core\Models\WebsiteRareValue;
 use Atom\Core\Models\WebsiteRareValueCategory;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -15,13 +16,19 @@ class RareValueController extends Controller
      */
     public function __invoke(Request $request): View
     {
+
         $categories = WebsiteRareValueCategory::with([
             'rareValues' => fn ($query) => $query->where('name', 'like', "%{$request->query('search')}%"),
-            'rareValues.item',
         ])
             ->when($request->has('category_id'), fn (Builder $query) => $query->where('id', $request->query('category_id')))
             ->get();
 
-        return view('rare-values', compact('categories'));
+
+        $furnitureIcons = WebsiteRareValue::query()
+            ->where('name', 'like', "%{$request->query('search')}%")
+            ->select('id', 'name', 'furniture_icon')
+            ->get();
+
+        return view('rare-values', compact('categories', 'furnitureIcons'));
     }
 }
