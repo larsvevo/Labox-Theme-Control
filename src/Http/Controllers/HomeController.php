@@ -6,6 +6,7 @@ use Atom\Core\Models\CameraWeb;
 use Atom\Core\Models\WebsiteArticle;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -41,10 +42,10 @@ class HomeController extends Controller
                 ->get();
 
 
-        $achievementScore = $user->settings()
-            ->select('achievement_score')
+        $achievementScore = DB::table('user_settings')
+            ->where('user_id', $user->id)
             ->value('achievement_score');
+
         return view('home', compact('articles', 'article', 'friends', 'referrals', 'photos', 'achievementScore'));
     }
 }
-
