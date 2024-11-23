@@ -15,11 +15,11 @@ class HomeController extends Controller
      */
     public function __invoke(Request $request): View
     {
-        $referrals = $request->user()
-            ->referrals;
+        $user = $request->user();
 
-        $friends = $request->user()
-            ->friends()
+        $referrals = $user->referrals;
+
+        $friends = $user->friends()
             ->whereRelation('friend', 'online', '1')
             ->get();
 
@@ -40,6 +40,11 @@ class HomeController extends Controller
                 ->with('user:id,username,look')
                 ->get();
 
-        return view('home', compact('articles', 'article', 'friends', 'referrals', 'photos'));
+
+        $achievementScore = $user->settings()
+            ->select('achievement_score')
+            ->value('achievement_score');
+        return view('home', compact('articles', 'article', 'friends', 'referrals', 'photos', 'achievementScore'));
     }
 }
+
