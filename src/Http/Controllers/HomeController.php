@@ -45,7 +45,17 @@ class HomeController extends Controller
         $achievementScore = DB::table('users_settings')
             ->where('user_id', $user->id)
             ->value('achievement_score');
+        
+            $lastOnlineTimestamp = DB::table('users')
+            ->where('user_id', $user->id)
+            ->value('last_online');
 
-        return view('home', compact('articles', 'article', 'friends', 'referrals', 'photos', 'achievementScore'));
+
+        $lastOnline = Carbon::createFromTimestamp($lastOnlineTimestamp)
+            ->locale('it') 
+            ->diffForHumans(); 
+
+
+        return view('home', compact('articles', 'article', 'friends', 'referrals', 'photos', 'achievementScore', 'lastOnline'));
     }
 }
