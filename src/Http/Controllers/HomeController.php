@@ -42,7 +42,7 @@ class HomeController extends Controller
                 ->get();
 
 
-        $achievementScore = DB::table('user_settings')
+        $achievementScore = DB::table('users_settings')
             ->where('user_id', $user->id)
             ->value('achievement_score');
 
