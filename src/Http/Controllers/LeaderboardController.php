@@ -6,6 +6,8 @@ use Atom\Core\Models\User;
 use Atom\Core\Models\WebsiteSetting;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
+use Atom\Core\Models\CameraWeb;
+use Atom\Core\Models\WebsiteArticle;
 
 class LeaderboardController extends Controller
 {
@@ -66,6 +68,17 @@ class LeaderboardController extends Controller
             ->limit(10)
             ->get();
 
-        return view('leaderboards', compact('credits', 'duckets', 'diamonds', 'onlineTimes', 'respects', 'achievements'));
+
+        $articles = WebsiteArticle::with('user')
+            ->where('is_published', true)
+            ->latest('id')
+            ->limit(6)
+            ->get(); 
+
+        $photos = CameraWeb::latest('id')
+                ->take(2)
+                ->with('user:id,username,look')
+                ->get();
+        return view('leaderboards', compact('credits', 'duckets', 'diamonds', 'onlineTimes', 'respects', 'achievements', 'articles', 'photos'));
     }
 }
