@@ -23,21 +23,22 @@ class HomeController extends Controller
             ->whereRelation('friend', 'online', '1')
             ->get();
 
-        $articles = WebsiteArticle::with('user')
-            ->where('is_published', true)
-            ->latest('id')
-            ->get();
-
         $article = WebsiteArticle::with('user')
             ->where('is_published', true)
             ->latest('id')
-            ->first();
-
-        $photos = CameraWeb::whereIn('user_id', $request->user()->friends->pluck('user_two_id'))
-            ->latest('id')
-            ->limit(4)
-            ->where('approved', true)
+            ->limit(6)
             ->get();
+
+        $articles = WebsiteArticle::with('user')
+            ->where('is_published', true)
+            ->latest('id')
+            ->limit(6)
+            ->get(); 
+
+        $photos = CameraWeb::latest('id')
+                ->take(4)
+                ->with('user:id,username,look')
+                ->get();
 
         return view('home', compact('articles', 'article', 'friends', 'referrals', 'photos'));
     }
